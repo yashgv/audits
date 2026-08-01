@@ -11,6 +11,7 @@ import {
   Plus,
   Settings,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 import { Wordmark } from "@/components/brand";
 import { cn, initialsOf } from "@/lib/utils";
@@ -26,9 +27,11 @@ const NAV = [
 export function Sidebar({
   user,
   persistent,
+  showSignOut,
 }: {
   user: SessionUser;
   persistent: boolean;
+  showSignOut: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -106,6 +109,12 @@ export function Sidebar({
               <ShieldCheck className="size-3.5" />
               22 controls loaded
             </span>
+            {!showSignOut ? (
+              <span className="flex items-center gap-2">
+                <Users className="size-3.5" />
+                Open workspace · no sign-in
+              </span>
+            ) : null}
           </div>
         </div>
       </nav>
@@ -122,17 +131,21 @@ export function Sidebar({
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13px] font-medium">{user.name ?? "Analyst"}</p>
-            <p className="truncate text-[11.5px] text-muted-foreground">{user.email}</p>
+            <p className="truncate text-[11.5px] text-muted-foreground">
+              {showSignOut ? user.email : "Shared demo workspace"}
+            </p>
           </div>
-          <button
-            type="button"
-            onClick={handleSignOut}
-            disabled={pending}
-            title="Sign out"
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground disabled:opacity-50"
-          >
-            <LogOut className="size-4" />
-          </button>
+          {showSignOut ? (
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={pending}
+              title="Sign out"
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground disabled:opacity-50"
+            >
+              <LogOut className="size-4" />
+            </button>
+          ) : null}
         </div>
       </div>
     </aside>

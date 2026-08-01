@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, TriangleAlert, CircleCheck, ShieldAlert } from "lucide-react";
+import { Plus, TriangleAlert, CircleCheck, Info, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatTile } from "@/components/viz/meters";
 import { CaseCard } from "@/components/dashboard/case-card";
@@ -52,6 +52,23 @@ export default async function DashboardPage({
             </Link>
           </Button>
         </div>
+      </div>
+
+      {/* What this is — the first thing a newcomer needs */}
+      <div className="glass mt-7 flex flex-col gap-3 p-5 sm:flex-row sm:items-center">
+        <Info className="size-4 shrink-0 text-primary" />
+        <p className="flex-1 text-[13px] leading-relaxed text-muted-foreground">
+          <span className="text-foreground">A case is one transaction under review.</span>{" "}
+          Add the documents behind it and Veritas runs 22 compliance controls across them,
+          then tells you whether to release the payment. Findings are simulated in this
+          demo build — the workflow around them is real.
+        </p>
+        <Link
+          href="/investigations/new"
+          className="shrink-0 text-[13px] text-primary underline-offset-4 hover:underline"
+        >
+          Try it →
+        </Link>
       </div>
 
       {/* Quick stats */}

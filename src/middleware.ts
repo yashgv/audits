@@ -8,6 +8,8 @@ type CookieToSet = { name: string; value: string; options: CookieOptions };
  * configured this is a no-op and the local demo session is used instead.
  */
 export async function middleware(request: NextRequest) {
+  if (process.env.NEXT_PUBLIC_AUTH_ENABLED !== "true") return NextResponse.next();
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key || !url.startsWith("http")) return NextResponse.next();

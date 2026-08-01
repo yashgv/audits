@@ -2,7 +2,7 @@ import { CircleCheck, CircleDashed } from "lucide-react";
 import { CHECKS } from "@/lib/investigation/catalog";
 import { requireUser } from "@/lib/auth";
 import { getStats, usingDatabase } from "@/lib/db";
-import { hasSupabase } from "@/lib/env";
+import { authEnabled, hasSupabase } from "@/lib/env";
 import { formatINR } from "@/lib/utils";
 import { ProfileForm } from "./profile-form";
 
@@ -28,7 +28,14 @@ export default async function SettingsPage() {
       <section className="glass mt-8 animate-fade-up p-7 [animation-delay:60ms]">
         <h2 className="text-[15px] font-medium tracking-tight">Profile</h2>
         <p className="mt-1 text-[12.5px] text-muted-foreground">
-          Signed in as <span className="font-mono text-foreground/80">{user.email}</span>
+          {authEnabled ? (
+            <>
+              Signed in as{" "}
+              <span className="font-mono text-foreground/80">{user.email}</span>
+            </>
+          ) : (
+            "Sign-in is off, so this profile belongs to the shared demo workspace."
+          )}
         </p>
         <div className="mt-6">
           <ProfileForm name={user.name ?? ""} org={user.org ?? ""} />
@@ -44,9 +51,13 @@ export default async function SettingsPage() {
         <div className="mt-5 space-y-3">
           <Capability
             on={hasSupabase}
-            title="Supabase authentication"
+            title="Sign-in"
             onText="Live — sessions are managed by your Supabase project."
-            offText="Not configured — a local browser session stands in. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to switch it on."
+            offText={
+              authEnabled
+                ? "Sign-in is on but no Supabase keys were found, so a local browser session stands in. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
+                : "Off — everyone shares one open workspace, so anyone can use the app without an account. Set NEXT_PUBLIC_AUTH_ENABLED=true to turn Supabase sign-in back on."
+            }
           />
           <Capability
             on={usingDatabase}

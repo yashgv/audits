@@ -4,12 +4,14 @@ import { ArrowLeft } from "lucide-react";
 import { Aurora } from "@/components/marketing/aurora";
 import { Wordmark } from "@/components/brand";
 import { getCurrentUser } from "@/lib/auth";
-import { hasSupabase } from "@/lib/env";
+import { authEnabled, hasSupabase } from "@/lib/env";
 import { LoginForm } from "./login-form";
 
 export const metadata = { title: "Sign in" };
 
 export default async function LoginPage() {
+  // Sign-in is off — there is nothing to log into.
+  if (!authEnabled) redirect("/dashboard");
   if (await getCurrentUser()) redirect("/dashboard");
 
   return (

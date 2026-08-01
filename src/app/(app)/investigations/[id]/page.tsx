@@ -4,6 +4,7 @@ import { ArrowLeft, FileText, Gauge, Layers, Timer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { RiskDial, ConfidenceMeter } from "@/components/viz/meters";
 import { FindingsPanel } from "@/components/investigation/findings-panel";
+import { HowToRead } from "@/components/investigation/how-to-read";
 import { ReportActions } from "@/components/investigation/report-actions";
 import { RunTimeline } from "@/components/investigation/run-timeline";
 import { requireUser } from "@/lib/auth";
@@ -99,6 +100,10 @@ export default async function InvestigationPage({
         <div className="space-y-6">
           <div className="animate-fade-up [animation-delay:60ms]">
             <FindingsPanel findings={result.findings} />
+          </div>
+
+          <div className="animate-fade-up [animation-delay:90ms]">
+            <HowToRead />
           </div>
 
           <section className="glass animate-fade-up p-6 [animation-delay:120ms]">

@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { hasSupabase } from "@/lib/env";
+import { OPEN_WORKSPACE, authEnabled, hasSupabase } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { store } from "@/lib/db";
 import type { SessionUser } from "@/lib/types";
@@ -8,12 +8,20 @@ import type { SessionUser } from "@/lib/types";
 export const DEMO_COOKIE = "veritas_demo_session";
 
 /**
- * Resolves the signed-in user.
+ * Resolves the current user.
  *
- * With Supabase configured this reads the real session. Without it, a local
- * cookie session stands in so the product is demonstrable out of the box.
+ * Three modes, in order of precedence:
+ *
+ *   1. Sign-in off (the default) — everyone shares one open workspace and there
+ *      is no login screen at all.
+ *   2. Sign-in on + Supabase keys — the real Supabase session.
+ *   3. Sign-in on, no keys — a local cookie session scoped to the browser.
  */
 export async function getCurrentUser(): Promise<SessionUser | null> {
+  if (!authEnabled) {
+    return store.ensureUser({ ...OPEN_WORKSPACE });
+  }
+
   if (hasSupabase) {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase!.auth.getUser();

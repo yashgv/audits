@@ -2,13 +2,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Aurora } from "@/components/marketing/aurora";
 import { HeroVisual } from "@/components/marketing/hero-visual";
+import { HowItWorks, HonestyPanel } from "@/components/marketing/explainer";
 import { Wordmark } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import { getCurrentUser } from "@/lib/auth";
 
-export default async function LandingPage() {
-  const user = await getCurrentUser();
-
+export default function LandingPage() {
   return (
     <main className="relative min-h-screen overflow-hidden">
       <Aurora />
@@ -17,18 +15,16 @@ export default async function LandingPage() {
         <div className="container flex h-20 items-center justify-between">
           <Wordmark />
           <Button asChild variant="ghost" size="sm">
-            <Link href={user ? "/dashboard" : "/login"}>
-              {user ? "Open workspace" : "Sign in"}
-            </Link>
+            <Link href="/dashboard">Open workspace</Link>
           </Button>
         </div>
       </header>
 
-      <section className="relative z-10 container pb-28 pt-10 text-center sm:pt-16">
+      <section className="relative z-10 container pb-24 pt-10 text-center sm:pt-16">
         <div className="animate-fade-up">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-[12.5px] text-muted-foreground backdrop-blur">
             <span className="size-1.5 rounded-full bg-pass" />
-            22 controls across GST, ledger and document forensics
+            No sign-up — open it and start
           </span>
         </div>
 
@@ -42,19 +38,28 @@ export default async function LandingPage() {
           with the evidence, a risk score and the action to take.
         </p>
 
-        <div className="mt-10 flex items-center justify-center animate-fade-up [animation-delay:240ms]">
+        <div className="mt-10 flex flex-col items-center gap-3 animate-fade-up [animation-delay:240ms]">
           <Button asChild size="lg" className="group">
-            <Link href={user ? "/investigations/new" : "/login"}>
+            <Link href="/investigations/new">
               Start an investigation
               <ArrowRight className="transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
           </Button>
+          <Link
+            href="/dashboard"
+            className="text-[13.5px] text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            or look at three finished cases first
+          </Link>
         </div>
 
         <div className="mt-20 animate-fade-up [animation-delay:320ms]">
           <HeroVisual />
         </div>
       </section>
+
+      <HowItWorks />
+      <HonestyPanel />
 
       <footer className="relative z-10 border-t border-border/60">
         <div className="container flex h-16 items-center justify-between text-[12.5px] text-muted-foreground">

@@ -1,0 +1,78 @@
+// Veritas — AI Compliance Workspace
+// Three tables. Nothing more.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Runtime goes through the transaction-mode pooler…
+  url       = env("DATABASE_URL")
+  // …migrations need a direct/session connection.
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  authId     String   @unique // Supabase auth uid, or the local demo id
+  email      String   @unique
+  name       String?
+  org        String?
+  createdAt  DateTime @default(now())
+
+  investigations Investigation[]
+
+  @@map("users")
+}
+
+model Investigation {
+  id        String   @id @default(cuid())
+  reference String   @unique // human-facing case number e.g. VRT-4F2A91
+  title     String
+  subject   String? // vendor / counterparty under review
+  notes     String?
+
+  status Status @default(QUEUED)
+
+  // Denormalised for fast dashboard sorting — full payload lives in `result`.
+  riskScore  Int?
+  confidence Int?
+  riskLevel  String?
+
+  /// InvestigationResult — see src/lib/investigation/engine.ts
+  result Json?
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents   UploadedDocument[]
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([userId, createdAt])
+  @@map("investigations")
+}
+
+model UploadedDocument {
+  id          String @id @default(cuid())
+  name        String
+  size        Int
+  mimeType    String
+  docType     String // Invoice | GST Return | Purchase Order | ...
+  fingerprint String // deterministic content hash shown in the audit trail
+
+  investigationId String
+  investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([investigationId])
+  @@map("uploaded_documents")
+}
+
+enum Status {
+  QUEUED
+  RUNNING
+  COMPLETED
+}
